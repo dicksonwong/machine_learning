@@ -46,10 +46,30 @@ Theta_grad = zeros(size(Theta));
 % terms where the corresponding (i,j)th value in the matrix R is
 % equal to 1; hence, subtract Y from X*Theta', take entry-wise 
 % with R, square each term, then sum all terms
-J_nonreg = (1/2) * sum(sum(((X*Theta' - Y) .* R).^2));
 
+% For brevity in the next few parts, we will define the matrix
+% containing such error terms for movies that have been rated
+% errors_def (for errors that have been defined)
+errors_def = (X*Theta' - Y) .* R;
 
+% Non-regularlized cost
+J_nonreg = (1/2) * sum(sum(errors_def.^2));
 
+% Calculate the gradient for X; note that the (i,k) term in the
+% matrix X_grad is equal to the sum over all terms in row i
+% (coresponding to movie i) in the matrix (X*Theta' - Y) .* R 
+% multiplied to the corresponding term in the kth feature column
+% in Theta.  In fact, we can easily obtain all terms through
+% matrix product (X*Theta' - Y) .* R) * Theta, which is n_movies
+% * n_features matrix  
+X_grad = errors_def * Theta;
+
+% Similarly, calculate the gradient for Theta; note that the (j,k)
+% term in this matrix is equal to the sum over all terms in col j
+% (corresponding to user j) in matrix errors_def multiplied to the
+% cooresponding term in the kth feature row of X.  This also
+% has the easy product errors_def' * X, which is n_users by n_features
+Theta_grad = errors_def' * X;
 
 J = J_nonreg;
 
