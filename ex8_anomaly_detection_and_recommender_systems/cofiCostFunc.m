@@ -71,11 +71,17 @@ X_grad = errors_def * Theta;
 % has the easy product errors_def' * X, which is n_users by n_features
 Theta_grad = errors_def' * X;
 
-% Calculate regularization term for the features X and Theta
+% Calculate regularization term for the features X and Theta for cost
 X_reg_term = (lambda / 2) * sum(sum(X .^ 2));
 Theta_reg_term = (lambda / 2) * sum(sum(Theta .^ 2));
-
 J = J_nonreg + X_reg_term + Theta_reg_term;
+
+% Calculate regularization term for features X and Theta for gradient
+% For each (i,k), we just need to add lambda * x_i_k to each corresponding
+% term in X_grad; that is, X_grad + lambda * X; similarly, Theta_grad =
+% Theta_grad + lambda * Theta
+X_grad = X_grad + lambda * X;
+Theta_grad = Theta_grad + lambda * Theta;
 
 
 
